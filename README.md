@@ -1,14 +1,14 @@
 codeigniter-phpunit
 ===================
 
-This project is a simple hack to make CodeIgniter 2.1.3 work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+This project is a simple hack to make CodeIgniter 2.1.x work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
 
 Start Testing
 -------------
 
-The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and the hacked CI's *system/core* files should overwrite the vanilla CI ones.
+The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and hacked CI's *system/core* files should overwrite the vanilla CI ones.
 
-After that, just put your own tests in *application/tests* folder. A `CITest.php` file is provided as an util class, to be used instead of *PHPUnit_Framework_TestCase*, but you can go ahead and use PHPUnit standard classes as you like.
+After that, just put your own tests in *application/tests* folder. A `CITest.php` file is provided as an util class, to be used instead of *PHPUnit_Framework_TestCase*, but you can use PHPUnit's standard classes as well.
 
 As an example, a unit test for CI's Email helper would be as follows:
 
@@ -48,7 +48,7 @@ The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, 
 
 ```
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpunit bootstrap="index.php">
+<phpunit bootstrap="application/tests/bootstrap.php">
     <testsuites>
 		<testsuite name="TestSuite">
 			<directory>application/tests</directory>
@@ -56,8 +56,8 @@ The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, 
 	</testsuites>
 	<php>
 		<const name="PHPUNIT_TEST" value="1" />
-        <const name="PHPUNIT_CHARSET" value="UTF-8" />
 		<server name="REMOTE_ADDR" value="0.0.0.0" />
+		<var name="CFG" value="1" />
 	</php>
 	<filter>
 		<blacklist>
@@ -70,35 +70,22 @@ The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, 
 
 What this config file is doing:
 
-1. Telling to use CI's own bootstrap file
+1. Telling to use a custom bootstrap file
 2. Telling PHPUnit to look for tests under application/tests
 3. Creating a constant for a PHPUnit runtime test environment, `PHPUNIT_TEST`. This will be used to hack into CI bootstrap behaviour.
-4. Creating a constant `PHPUNIT_CHARSET` to be used instead of your `$config['charset']`.
-4. Providing a `$_SERVER['REMOTE_ADDR']` default value so CI 2.1.3 security checks will still work.
+4. Creating a global variable $CFG that CI needs available at runtime
+4. Providing a `$_SERVER['REMOTE_ADDR']` default value so CI's security checks won't break.
 5. For code coverage analysis, we're filtering out CI *system* directory, and optionally your *application/libraries* directory (if you uncomment that line).
 
 ### Hacking CI system files ###
 
-CI relies a lot on superglobal variables, which are not easily available in a PHPUnit runtime. However, simple checks using the new `PHPUNIT_TEST` constant adapts CodeIgniter behaviour.
+CI relies a lot on superglobal variables, which are not easily available in a PHPUnit runtime. However, providing those critical global variables beforehand and providing simple checks using the new `PHPUNIT_TEST` constant adapts CodeIgniter behaviour.
 
 CI will start by doing autoloading, reading config files, and most importantly, **load your default Controller**, since it has no routing information (no URI or CLI parameters). This is actually useful, since this is what makes `$CI =& get_instance()` possible in our tests.
 
-#### The hacks: ####
+#### Hacks: ####
 
 >
-
-> `Utf8.php`
->> *Line 47 changed to:*
->>
->>```
->> AND (
->>    	(is_object($CFG) AND $CFG->item('charset') == 'UTF-8')
->>	    OR (defined('PHPUNIT_TEST') AND PHPUNIT_CHARSET == 'UTF-8')
->>		)
->> )
->>```
->>
->> Superglobal `$CFG` is not available here in PHPUnit, so this check prevents a fatal error, and using `PHPUNIT_CHARSET` prevents CI to disable UTF-8 support, if you're using it.
 
 > `CodeIgniter.php`
 >> *Line 325 changed to:*
@@ -117,15 +104,6 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 >>
 >> Same logic here, we have to prevent CI from outputting things before our tests.
 
-> `Common.php`
->> *Lines 308 and 332 changed to:*
->>
->>```
->> if (defined('PHPUNIT_TEST'))
->> throw new PHPUnit_Framework_Exception($message, $status_code);
->>```
->>
->> These hacks are technically optional, but are very useful. These changes are made to `show_error()` and `show_404()` functions, because their use is encouraged when creating controllers, but their behaviours are terrible for testing purposes: they send output directly and *terminate* the PHP script right there. It's much more useful when testing to throw exceptions.
 
 Tips for Testing
 ================
@@ -165,7 +143,7 @@ class EmailHelperTest extends CITestCase
 
 It provides a property `$this->CI` with the default controller loaded, and another `$this->db` as a wrapper to a `PHPUnit_Extensions_Database_DB_IDatabaseConnection`. If your test does not use database connections, it will not be loaded.
 
-**Carefully considerations about this database connection:** it uses you application's database config file to initiate a PDO "fixture" **from you real database**. In other words, it is not a fixture, but a quick way for you to make assertions in your real database. As it is, you must define a `setUp()` call in your methods, or it will use PHPUnit's default database logic to truncate it after every test.
+**Considerations about this database connection:** it uses your application's database config file to initiate a PDO "fixture" **from you real database**. In other words, it is not a fixture, but a quick way for you to make assertions in your real database. As it is, you must define a `setUp()` call in your methods, or it will use PHPUnit's default database logic to truncate it after every test.
 
 Make sure you understand [PHPUnit's Database Manual](http://www.phpunit.de/manual/3.7/en/database.html) completely before you use this database connection, and change it to your needs.
 
@@ -175,7 +153,7 @@ If you set `$db['default']['db_debug'] = TRUE`, every error your test encounters
 
 ### Avoid die() and exit() ###
 
-If you use them, it will interrupt testing, as it ends PHP execution. That's why `show_error()` and `show_404` were changed to throw Exceptions, which are much easier to test.
+If you use them, they'll interrupt testing, as they end PHP execution. That's why `show_error()` and `show_404` were changed to throw Exceptions, which are much easier to test.
 
 ### Change your environment to 'testing' ###
 
@@ -183,7 +161,7 @@ In CodeIgniter `index.php`, you can change the application environment from 'dev
 
 ### Test show_error() and show_404() using Exceptions ###
 
-You can benefit from the hacks made at CI's core `Common.php` file by making this kind of tests:
+You can benefit from the hacks made at bootstrap.php by making this kind of tests:
 
 ```
 /**
@@ -213,3 +191,17 @@ public function testHomeController()
 	$CI->index();
 }
 ```
+
+Changelog
+------------
+
+2014-01-21:
+* Reduced number of system/core file hacks needed (only 1 now)
+* New bootstrap file (hacks into system/core/Common.php)
+* Improved phpunit.xml (creates global $CFG so system/core/Utf8.php doesn't need hacking)
+* Ensured compatibility with CI 2.1.4, probably compatible with all 2.1.x versions
+* Updated README
+
+2013-04-03:
+* Initial version
+* Compatible with CI 2.1.3
