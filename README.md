@@ -208,13 +208,18 @@ public function testHomeController()
 Changelog
 ------------
 
-2014-01-21:
+1.2 (2014-01-24):
+* Fixed a critical bug. Previous hack in Utf8.php is fundamental.
+* Reverting changes in phpunit.xml.
+* Reverting changes in README.
+
+1.1 (2014-01-21):
 * Reduced number of system/core file hacks needed (only 1 now)
 * New bootstrap file (hacks into system/core/Common.php)
 * Improved phpunit.xml (creates global $CFG so system/core/Utf8.php doesn't need hacking)
 * Ensured compatibility with CI 2.1.4, probably compatible with all 2.1.x versions
 * Updated README
 
-2013-04-03:
+1.0 (2013-04-03):
 * Initial version
 * Compatible with CI 2.1.3
