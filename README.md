@@ -56,8 +56,8 @@ The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, 
 	</testsuites>
 	<php>
 		<const name="PHPUNIT_TEST" value="1" />
+		<const name="PHPUNIT_CHARSET" value="UTF-8" />
 		<server name="REMOTE_ADDR" value="0.0.0.0" />
-		<var name="CFG" value="1" />
 	</php>
 	<filter>
 		<blacklist>
@@ -73,7 +73,7 @@ What this config file is doing:
 1. Telling to use a custom bootstrap file
 2. Telling PHPUnit to look for tests under application/tests
 3. Creating a constant for a PHPUnit runtime test environment, `PHPUNIT_TEST`. This will be used to hack into CI bootstrap behaviour.
-4. Creating a global variable $CFG that CI needs available at runtime
+4. Creating a constant `PHPUNIT_CHARSET` to be used instead of your `$config['charset']`.
 4. Providing a `$_SERVER['REMOTE_ADDR']` default value so CI's security checks won't break.
 5. For code coverage analysis, we're filtering out CI *system* directory, and optionally your *application/libraries* directory (if you uncomment that line).
 
@@ -86,6 +86,19 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 #### Hacks: ####
 
 >
+
+> `Utf8.php`
+>> *Line 47 changed to:*
+>>
+>>```
+>> AND (
+>>    	(is_object($CFG) AND $CFG->item('charset') == 'UTF-8')
+>>	    OR (defined('PHPUNIT_TEST') AND PHPUNIT_CHARSET == 'UTF-8')
+>>		)
+>> )
+>>```
+>>
+>> Superglobal `$CFG` is not available here within PHPUnit, so this check prevents a fatal error, and using PHPUNIT_CHARSET` prevents CI to disable UTF-8 support, if you're using it.
 
 > `CodeIgniter.php`
 >> *Line 325 changed to:*
