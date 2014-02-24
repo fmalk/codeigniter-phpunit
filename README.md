@@ -1,14 +1,14 @@
 codeigniter-phpunit
 ===================
 
-This project is a simple hack to make CodeIgniter 2.1.x work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+This project is a simple hack to make CodeIgniter 2.1.x work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
 
 Start Testing
 -------------
 
 The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and hacked CI's *system/core* files should overwrite the vanilla CI ones.
 
-After that, just put your own tests in *application/tests* folder. A `CITest.php` file is provided as an util class, to be used instead of *PHPUnit_Framework_TestCase*, but you can use PHPUnit's standard classes as well.
+After that, just put your own tests in *application/tests* folder. A `CITest.php` file is provided as an util class, to be used instead of `PHPUnit_Framework_TestCase`, but you can use PHPUnit's standard classes as well.
 
 As an example, a unit test for CI's Email helper would be as follows:
 
@@ -71,7 +71,7 @@ The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, 
 What this config file is doing:
 
 1. Telling to use a custom bootstrap file
-2. Telling PHPUnit to look for tests under application/tests
+2. Telling PHPUnit to look for tests under *application/tests*
 3. Creating a constant for a PHPUnit runtime test environment, `PHPUNIT_TEST`. This will be used to hack into CI bootstrap behaviour.
 4. Creating a constant `PHPUNIT_CHARSET` to be used instead of your `$config['charset']`.
 4. Providing a `$_SERVER['REMOTE_ADDR']` default value so CI's security checks won't break.
@@ -98,7 +98,7 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 >> )
 >>```
 >>
->> Superglobal `$CFG` is not available here within PHPUnit, so this check prevents a fatal error, and using PHPUNIT_CHARSET` prevents CI to disable UTF-8 support, if you're using it.
+>> Superglobal `$CFG` is not available here within PHPUnit, so this check prevents a fatal error, and using `PHPUNIT_CHARSET` prevents CI to disable UTF-8 support, if you're using it.
 
 > `CodeIgniter.php`
 >> *Line 325 changed to:*
@@ -166,15 +166,15 @@ If you set `$db['default']['db_debug'] = TRUE`, every error your test encounters
 
 ### Avoid die() and exit() ###
 
-If you use them, they'll interrupt testing, as they end PHP execution. That's why `show_error()` and `show_404` were changed to throw Exceptions, which are much easier to test.
+If you use them, they'll interrupt testing, as they end PHP execution. That's why `show_error()` and `show_404()` were changed to throw `Exception`, which are much easier to test.
 
 ### Change your environment to 'testing' ###
 
-In CodeIgniter `index.php`, you can change the application environment from 'development' to 'production' or 'testing', which primarily avoid `error_reporting()` outputs from PHP. If you let `error_reporting()` outputs, you won't be able to use PHPUnit strict mode, and you'll have a hard time testing your own outputs.
+In CodeIgniter `index.php`, you can change the application environment from 'development' to 'production' or 'testing', which primarily avoid `error_reporting()` outputs from PHP. If you let `error_reporting()` output, you won't be able to use PHPUnit strict mode, and you'll have a hard time testing your own outputs.
 
-### Test show_error() and show_404() using Exceptions ###
+### Test `show_error()` and `show_404()` using Exceptions ###
 
-You can benefit from the hacks made at bootstrap.php by making this kind of tests:
+You can benefit from the hacks made at `bootstrap.php` by making this kind of tests:
 
 ```
 /**
@@ -184,7 +184,7 @@ You can benefit from the hacks made at bootstrap.php by making this kind of test
  */
 public function testCreateNullName()
 {
-    // this should call show_error('forbidden', 402)
+    // this should call show_error('forbidden', 403)
 	$this->CI->resourcemodel->deleteResource(1);
 }
 ```
@@ -209,14 +209,14 @@ Changelog
 ------------
 
 1.2 (2014-01-24):
-* Fixed a critical bug. Previous hack in Utf8.php is fundamental.
-* Reverting changes in phpunit.xml.
+* Fixed a critical bug. Previous hack in `Utf8.php` is fundamental.
+* Reverting changes in `phpunit.xml`.
 * Reverting changes in README.
 
 1.1 (2014-01-21):
-* Reduced number of system/core file hacks needed (only 1 now)
-* New bootstrap file (hacks into system/core/Common.php)
-* Improved phpunit.xml (creates global $CFG so system/core/Utf8.php doesn't need hacking)
+* Reduced number of *system/core* file hacks needed (only 1 now)
+* New bootstrap file (hacks into `system/core/Common.php`)
+* Improved `phpunit.xml` (creates global `$CFG` so `system/core/Utf8.php` doesn't need hacking)
 * Ensured compatibility with CI 2.1.4, probably compatible with all 2.1.x versions
 * Updated README
 
