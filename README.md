@@ -212,7 +212,7 @@ Changelog
 
 1.2.1 (2014-06-16):
 * Tested with CI 2.2.0
-* Added Travis CI build at https://travis-ci.org/fmalk/codeigniter-phpunit.svg?branch=master)](https://travis-ci.org/fmalk/codeigniter-phpunit
+* Added Travis CI build at https://travis-ci.org/fmalk/codeigniter-phpunit
 * Updated README
 
 1.2 (2014-01-24):
