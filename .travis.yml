@@ -9,6 +9,8 @@ php:
 before_install:
   - wget https://github.com/EllisLab/CodeIgniter/archive/2.2.0.zip -O /tmp/codeigniter-2.2.0.zip
   - unzip /tmp/codeigniter-2.2.0.zip
+  - rm -Rf ./application
+  - rm -Rf ./system
   - mv CodeIgniter-2.2.0/application ./application
   - mv CodeIgniter-2.2.0/system ./system
   - mv CodeIgniter-2.2.0/index.php index.php
