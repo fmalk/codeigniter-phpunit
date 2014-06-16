@@ -1,7 +1,9 @@
+[![Build Status](https://travis-ci.org/fmalk/codeigniter-phpunit.svg?branch=master)](https://travis-ci.org/fmalk/codeigniter-phpunit)
+
 codeigniter-phpunit
 ===================
 
-This project is a simple hack to make CodeIgniter 2.1.x work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+This project is a simple hack to make CodeIgniter 2.x work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
 
 Start Testing
 -------------
@@ -207,6 +209,11 @@ public function testHomeController()
 
 Changelog
 ------------
+
+1.2.1 (2014-06-16):
+* Tested with CI 2.2.0
+* Added Travis CI build at https://travis-ci.org/fmalk/codeigniter-phpunit.svg?branch=master)](https://travis-ci.org/fmalk/codeigniter-phpunit
+* Updated README
 
 1.2 (2014-01-24):
 * Fixed a critical bug. Previous hack in `Utf8.php` is fundamental.
