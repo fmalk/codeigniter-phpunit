@@ -3,7 +3,7 @@
 codeigniter-phpunit
 ===================
 
-This project is a simple hack to make CodeIgniter 2.x work seamlessly with PHPUnit 3.7. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+This project is a simple hack to make CodeIgniter 2.x work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
 
 Start Testing
 -------------
@@ -101,6 +101,15 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 >>```
 >>
 >> Superglobal `$CFG` is not available here within PHPUnit, so this check prevents a fatal error, and using `PHPUNIT_CHARSET` prevents CI to disable UTF-8 support, if you're using it.
+
+> `URI.php`
+>> *Line 90 changed to:*
+>>
+>>```
+>> if (!defined('PHPUNIT_TEST') && (php_sapi_name() == 'cli' or defined('STDIN')))
+>>```
+>>
+>> This extra check for PHPUnit CLI environment makes sure CI ignores `phpunit` command line arguments not intended to be parsed by CI.
 
 > `CodeIgniter.php`
 >> *Line 325 changed to:*
@@ -209,6 +218,9 @@ public function testHomeController()
 
 Changelog
 ------------
+
+1.3 (2014-06-16):
+* Added a hack to `URI.php` to ignore `phpunit` command line arguments. (Thanks @ryan5500)
 
 1.2.1 (2014-06-16):
 * Tested with CI 2.2.0
