@@ -1,9 +1,7 @@
 language: php
 php:
-  - 5.6
-  - 5.5
   - 5.4
-  - 5.3
+  - hhvm
   
 # install vanilla CI 2.2 before anything
 before_install:
@@ -23,3 +21,8 @@ install:
   - mv codeigniter-phpunit-master/system/core/CodeIgniter.php ./system/core/CodeIgniter.php
   - mv codeigniter-phpunit-master/system/core/Utf8.php ./system/core/Utf8.php
   - mv codeigniter-phpunit-master/phpunit.xml phpunit.xml
+
+# run multiple test commands
+script:
+  - phpunit                  #default test command
+  - phpunit -c phpunit.xml   #custom test command to make sure CLI args don't break the test
