@@ -19,6 +19,7 @@ install:
   - unzip /tmp/codeigniter-phpunit.zip
   - mv codeigniter-phpunit-master/application/tests ./application/tests
   - mv codeigniter-phpunit-master/system/core/CodeIgniter.php ./system/core/CodeIgniter.php
+  - mv codeigniter-phpunit-master/system/core/URI.php ./system/core/URI.php
   - mv codeigniter-phpunit-master/system/core/Utf8.php ./system/core/Utf8.php
   - mv codeigniter-phpunit-master/phpunit.xml phpunit.xml
 
