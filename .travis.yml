@@ -14,9 +14,9 @@ install:
   - cp -r CodeIgniter-2.2.0/system/* system/
   - cp -r CodeIgniter-2.2.0/application/* application/
   - mv CodeIgniter-2.2.0/index.php index.php
-  - rm application/tests/CITest.php
   - rm -rf CodeIgniter-2.2.0
 
 # run multiple test commands
 script:
   - phpunit                  #default test command
+  - phpunit -c phpunit.xml   #custom test command to make sure CLI args don't break the test
