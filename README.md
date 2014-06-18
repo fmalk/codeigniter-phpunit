@@ -14,9 +14,7 @@ After that, just put your own tests in *application/tests* folder. A `CITest.php
 
 As an example, a unit test for CI's Email helper would be as follows:
 
-```
-<?php
-
+```php
 class EmailHelperTest extends PHPUnit_Framework_TestCase
 {
     private $CI;
@@ -33,13 +31,13 @@ class EmailHelperTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse(valid_email('test#testcom'));
 	}
 }
-
-?>
 ```
 
 Just use PHPUnit's command line tool at your application root directory:
 
-`$> phpunit`
+```bash
+$> phpunit
+```
 
 How it Works
 ------------
@@ -48,7 +46,7 @@ How it Works
 
 The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, as PHPUnit XML config file allows. So, we'll let CI start its framework as usual, complete with configuration and auto-loading as your application wants. We do this by using a base `phpunit.xml`:
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit bootstrap="application/tests/bootstrap.php">
     <testsuites>
@@ -92,7 +90,7 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 > `Utf8.php`
 >> *Line 47 changed to:*
 >>
->>```
+>>```php
 >> AND (
 >>    	(is_object($CFG) AND $CFG->item('charset') == 'UTF-8')
 >>	    OR (defined('PHPUNIT_TEST') AND PHPUNIT_CHARSET == 'UTF-8')
@@ -105,7 +103,7 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 > `URI.php`
 >> *Line 90 changed to:*
 >>
->>```
+>>```php
 >> if (!defined('PHPUNIT_TEST') && (php_sapi_name() == 'cli' or defined('STDIN')))
 >>```
 >>
@@ -114,7 +112,7 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 > `CodeIgniter.php`
 >> *Line 325 changed to:*
 >>
->>```
+>>```php
 >> if (!defined('PHPUNIT_TEST')) { ... }
 >>```
 >>
@@ -122,7 +120,7 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 >>
 >> *Line 386 changed to:*
 >>
->>```
+>>```php
 >> if ($EXT->_call_hook('display_override') === FALSE && !defined('PHPUNIT_TEST'))
 >>```
 >>
@@ -138,9 +136,7 @@ The `CITestCase` file extends PHPUnit's `PHPUnit_Extensions_Database_TestCase` a
 
 The example `EmailHelperTest` provided before would be changed to:
 
-```
-<?php
-
+```php
 class EmailHelperTest extends CITestCase
 {    
 	public function setUp()
@@ -187,7 +183,7 @@ In CodeIgniter `index.php`, you can change the application environment from 'dev
 
 You can benefit from the hacks made at `bootstrap.php` by making this kind of tests:
 
-```
+```php
 /**
  * @expectedException           PHPUnit_Framework_Exception
  * @expectedExceptionCode       403
@@ -207,7 +203,7 @@ has tightly coupled dependencies with classes like Session, Cookies, Caches or I
 of this manual to teach how to (re)write CI applications with dependency injection in mind, but if you
 have testable controllers, you can load them in tests by changing the `$CI` variable:
 
-```
+```php
 public function testHomeController()
 {
 	$CI =& get_instance();
