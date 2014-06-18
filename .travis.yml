@@ -2,28 +2,21 @@ language: php
 php:
   - 5.4
   - hhvm
-  
+
 # install vanilla CI 2.2 before anything
 before_install:
-  - wget https://github.com/EllisLab/CodeIgniter/archive/2.2.0.zip -O /tmp/codeigniter-2.2.0.zip
-  - unzip /tmp/codeigniter-2.2.0.zip
-  - rm -Rf ./application
-  - rm -Rf ./system
-  - mv CodeIgniter-2.2.0/application ./application
-  - mv CodeIgniter-2.2.0/system ./system
-  - mv CodeIgniter-2.2.0/index.php index.php
-  
+  - wget https://github.com/EllisLab/CodeIgniter/archive/2.2.0.tar.gz -O - | tar xz
+  - cp -r application/* CodeIgniter-2.2.0/application/
+  - cp -r system/* CodeIgniter-2.2.0/system/
+
 # install this project on top of it
 install:
-  - wget https://github.com/fmalk/codeigniter-phpunit/archive/master.zip -O /tmp/codeigniter-phpunit.zip
-  - unzip /tmp/codeigniter-phpunit.zip
-  - mv codeigniter-phpunit-master/application/tests ./application/tests
-  - mv codeigniter-phpunit-master/system/core/CodeIgniter.php ./system/core/CodeIgniter.php
-  - mv codeigniter-phpunit-master/system/core/URI.php ./system/core/URI.php
-  - mv codeigniter-phpunit-master/system/core/Utf8.php ./system/core/Utf8.php
-  - mv codeigniter-phpunit-master/phpunit.xml phpunit.xml
+  - cp -r CodeIgniter-2.2.0/system/* system/
+  - cp -r CodeIgniter-2.2.0/application/* application/
+  - mv CodeIgniter-2.2.0/index.php index.php
+  - rm application/tests/CITest.php
+  - rm -rf CodeIgniter-2.2.0
 
 # run multiple test commands
 script:
   - phpunit                  #default test command
-  - phpunit -c phpunit.xml   #custom test command to make sure CLI args don't break the test
