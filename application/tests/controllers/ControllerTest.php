@@ -36,13 +36,9 @@ class ControllerTest extends PHPUnit_Framework_TestCase
 			if (!$success)
 				$this->markTestSkipped('Cannot create test controller file');
 		}
-		// check for the file one last time
-		if (!file_exists($folder.'/stub.php')) {
-			$this->markTestSkipped('Stub file not present');
-		}
 		
 		// Stub is there, let's autoload it
-		$this->assertTrue(class_exists('Stub'), 'Stub is loadable');
+		$this->assertTrue(class_exists('Stub'), 'Stub is loadable at '.realpath($folder.'/stub.php'));
 		$this->CI = new Stub();
 		$this->CI->index();
 		
