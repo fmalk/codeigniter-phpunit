@@ -29,7 +29,11 @@ function show_404($page = '', $log_error = TRUE)
 
 require_once dirname(__FILE__) . '/../../index.php';
 
-foreach (glob(APPPATH.'controllers/**/*'.EXT) as $controller)
-{
-	require_once $controller;
-}
+/*
+ * This will autoload controllers inside subfolders
+ */ 
+spl_autoload_register(function ($class) {
+	foreach (glob(APPPATH.'controllers/**/'.$class.EXT) as $controller) {
+		require_once $controller;
+	}
+});

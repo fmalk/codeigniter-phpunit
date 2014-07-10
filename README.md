@@ -215,6 +215,9 @@ public function testHomeController()
 Changelog
 ------------
 
+1.4 (2014-07-09):
+* Added a hack to `tests\bootstrap.php` to autoload controllers inside subfolders (see #8)
+
 1.3 (2014-06-16):
 * Added a hack to `URI.php` to ignore `phpunit` command line arguments. (Thanks @ryan5500)
 
