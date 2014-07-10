@@ -215,6 +215,9 @@ public function testHomeController()
 Changelog
 ------------
 
+1.4.1 (2014-07-09):
+* Small fix in autoload filepath
+
 1.4 (2014-07-09):
 * Added a hack to `tests\bootstrap.php` to autoload controllers inside subfolders (see #8)
 
