@@ -163,7 +163,7 @@ class EmailHelperTest extends CITestCase
 
 It provides a property `$this->CI` with the default controller loaded, and another `$this->db` as a wrapper to a `PHPUnit_Extensions_Database_DB_IDatabaseConnection`. If your test does not use database connections, it will not be loaded.
 
-**Considerations about this database connection:** it uses your application's database config file to initiate a PDO "fixture" **from you real database**. In other words, it is not a fixture, but a quick way for you to make assertions in your real database. As it is, you must define a `setUp()` call in your methods, or it will use PHPUnit's default database logic to truncate it after every test.
+**Considerations about this database connection:** it uses your application's database config file to initiate a PDO "fixture" **from your real database**. In other words, it is not a fixture, but a quick way for you to make assertions in your real database. As it is, you must define a `setUp()` call in your methods, or it will use PHPUnit's default database logic to truncate it after every test.
 
 Make sure you understand [PHPUnit's Database Manual](http://www.phpunit.de/manual/3.7/en/database.html) completely before you use this database connection, and change it to your needs.
 
