@@ -3,7 +3,9 @@
 codeigniter-phpunit
 ===================
 
-This project is a simple hack to make CodeIgniter 2.x work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+This project is a simple hack to make CodeIgniter **3.x** work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+
+If you are looking for CodeIgniter **2.x** support, see branch/tag [2.x](https://github.com/fmalk/codeigniter-phpunit/master/README.md).
 
 Start Testing
 -------------
@@ -87,44 +89,15 @@ CI will start by doing autoloading, reading config files, and most importantly, 
 
 >
 
-> `Utf8.php`
->> *Line 47 changed to:*
->>
->>```php
->> AND (
->>    	(is_object($CFG) AND $CFG->item('charset') == 'UTF-8')
->>	    OR (defined('PHPUNIT_TEST') AND PHPUNIT_CHARSET == 'UTF-8')
->>		)
->> )
->>```
->>
->> Superglobal `$CFG` is not available here within PHPUnit, so this check prevents a fatal error, and using `PHPUNIT_CHARSET` prevents CI to disable UTF-8 support, if you're using it.
-
-> `URI.php`
->> *Line 90 changed to:*
->>
->>```php
->> if (!defined('PHPUNIT_TEST') && (php_sapi_name() == 'cli' or defined('STDIN')))
->>```
->>
->> This extra check for PHPUnit CLI environment makes sure CI ignores `phpunit` command line arguments not intended to be parsed by CI.
-
 > `CodeIgniter.php`
->> *Line 325 changed to:*
 >>
->>```php
->> if (!defined('PHPUNIT_TEST')) { ... }
->>```
->>
->> This is the line which starts calling your controller's intended method from URI parameters, but in test we want to call the method ourselves. So this check skips the method call.
->>
->> *Line 386 changed to:*
+>> *Line 531 changed to:*
 >>
 >>```php
 >> if ($EXT->_call_hook('display_override') === FALSE && !defined('PHPUNIT_TEST'))
 >>```
 >>
->> Same logic here, we have to prevent CI from outputting things before our tests.
+>> Prevent CI from outputting things before our tests.
 
 
 Tips for Testing
@@ -215,6 +188,18 @@ public function testHomeController()
 Changelog
 ------------
 
+3.0 (2015-02-09):
+* Initial support for CI 3.x.
+* Merged from #22. (Thanks @feryardiant)
+* README changed to reflect 3.x hacks.
+
+2.0 (2015-02-09):
+* Old CI 2.x support will now be called "2.0" version tag.
+* README improvements.
+
+1.4.2 (2014-07-25):
+* README fixes
+
 1.4.1 (2014-07-09):
 * Small fix in autoload filepath
 
@@ -244,3 +229,4 @@ Changelog
 1.0 (2013-04-03):
 * Initial version
 * Compatible with CI 2.1.3
+
