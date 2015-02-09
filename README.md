@@ -3,7 +3,9 @@
 codeigniter-phpunit
 ===================
 
-This project is a simple hack to make CodeIgniter 2.x work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+This project is a simple hack to make CodeIgniter **2.x** work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
+
+If you are looking for CodeIgniter **3.x** support, see branch/tag [3.x](https://github.com/fmalk/codeigniter-phpunit/CI3/README.md).
 
 Start Testing
 -------------
@@ -215,6 +217,17 @@ public function testHomeController()
 Changelog
 ------------
 
+3.0 (2015-02-09):
+* Initial support for CI 3.x.
+* Merged from #22. (Thanks @feryardiant)
+
+2.0 (2015-02-09):
+* Old CI 2.x support will now be called "2.0" version tag.
+* README improvements.
+
+1.4.2 (2014-07-25):
+* README fixes
+
 1.4.1 (2014-07-09):
 * Small fix in autoload filepath
 
@@ -244,3 +257,4 @@ Changelog
 1.0 (2013-04-03):
 * Initial version
 * Compatible with CI 2.1.3
+
