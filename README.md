@@ -171,7 +171,7 @@ Make sure you understand [PHPUnit's Database Manual](http://www.phpunit.de/manua
 
 ### Set $db['default']['db_debug'] to FALSE ###
 
-If you set `$db['default']['db_debug'] = TRUE`, every error your test encounters will output database information and end the script. It is better to throw Exceptions and let you test handle it.
+If you set `$db['default']['db_debug'] = TRUE`, every error your test encounters will output database information and end the script. It is better to throw Exceptions and let your test handle it.
 
 ### Avoid die() and exit() ###
 
