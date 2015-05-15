@@ -23,4 +23,4 @@ install:
 
 # run multiple test commands
 script:
-  - phpunit -c application/tests/phpunit.xml   #custom test command to make sure CLI args don't break the test
+  - phpunit -c phpunit.xml   #custom test command to make sure CLI args don't break the test
