@@ -28,12 +28,3 @@ function show_404($page = '', $log_error = TRUE)
  */
 
 require_once dirname(__FILE__) . '/../../index.php';
-
-/*
- * This will autoload controllers inside subfolders
- */ 
-spl_autoload_register(function ($class) {
-	foreach (glob(APPPATH.'controllers/**/'.strtolower($class).'.php') as $controller) {
-		require_once $controller;
-	}
-});
