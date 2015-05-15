@@ -6,8 +6,7 @@ php:
   - hhvm
 
 env:
-  - CI_VERSION=2.2.1
-  - CI_VERSION=3.0rc2
+  - CI_VERSION=2.2.2
   - CI_VERSION=3.0.0
 
 # install vanilla CI 2.2 before anything
