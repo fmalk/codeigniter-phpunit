@@ -5,14 +5,14 @@ codeigniter-phpunit
 
 This project is a simple hack to make CodeIgniter **3.x** work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
 
-If you are looking for CodeIgniter **2.x** support, see branch/tag [2.x](https://github.com/fmalk/codeigniter-phpunit/tree/master).
+If you are looking for CodeIgniter **2.x** support, see branch/tag [2.x](https://github.com/fmalk/codeigniter-phpunit/tree/2.x).
 
 Start Testing
 -------------
 
-The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and hacked CI's *system/core* files should overwrite the vanilla CI ones.
+The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and hacked *system/core/CodeIgniter.php* file should overwrite the vanilla CI one.
 
-After that, just put your own tests in *application/tests* folder. A `CITest.php` file is provided as an util class, to be used instead of `PHPUnit_Framework_TestCase`, but you can use PHPUnit's standard classes as well.
+After that, just put your own tests in *application/tests* folder. A `CITestCase.php` file is provided as an util class, to be used instead of `PHPUnit_Framework_TestCase`, but you can use PHPUnit's standard classes as well.
 
 As an example, a unit test for CI's Email helper would be as follows:
 
@@ -58,7 +58,6 @@ The idea is to use CodeIgniter's own bootstrap file to bootstrap PHPUnit tests, 
 	</testsuites>
 	<php>
 		<const name="PHPUNIT_TEST" value="1" />
-		<const name="PHPUNIT_CHARSET" value="UTF-8" />
 		<server name="REMOTE_ADDR" value="0.0.0.0" />
 	</php>
 	<filter>
@@ -75,15 +74,16 @@ What this config file is doing:
 1. Telling to use a custom bootstrap file
 2. Telling PHPUnit to look for tests under *application/tests*
 3. Creating a constant for a PHPUnit runtime test environment, `PHPUNIT_TEST`. This will be used to hack into CI bootstrap behaviour.
-4. Creating a constant `PHPUNIT_CHARSET` to be used instead of your `$config['charset']`.
 4. Providing a `$_SERVER['REMOTE_ADDR']` default value so CI's security checks won't break.
 5. For code coverage analysis, we're filtering out CI *system* directory, and optionally your *application/libraries* directory (if you uncomment that line).
 
 ### Hacking CI system files ###
 
-CI relies a lot on superglobal variables, which are not easily available in a PHPUnit runtime. However, providing those critical global variables beforehand and providing simple checks using the new `PHPUNIT_TEST` constant adapts CodeIgniter behaviour.
+CodeIgniter 3.x needs fewer hacks than its predecessor. In fact, if you use Hook: Display Override (`$hook['display_override']` in *application/config/config.php*), there's no need to hack core files *at all*.
 
-CI will start by doing autoloading, reading config files, and most importantly, **load your default Controller**, since it has no routing information (no URI or CLI parameters). This is actually useful, since this is what makes `$CI =& get_instance()` possible in our tests.
+There's only one check to be made, and our `PHPUNIT_TEST` is there to help with that. If you do use Hook: Display Override in you application, you can even take that out from `phpunit.xml`.
+
+CI will start by autoloading our custom bootstrap file, reading config files, and most importantly, **load your default Controller**, since it has no routing information (no URI or CLI parameters). This is actually useful, since this is what makes `$CI =& get_instance()` possible in our tests.
 
 #### Hacks: ####
 
@@ -105,23 +105,44 @@ Tips for Testing
 
 ### Using provided CITestCase class ###
 
-The `CITestCase` file extends PHPUnit's `PHPUnit_Extensions_Database_TestCase` and provides a few common use cases for CodeIgniter tests, most importantly, database assertions.
+The `CITestCase` file extends PHPUnit's `PHPUnit_Framework_TestCase` and provides a few common use cases for CodeIgniter tests, most importantly, loading controllers files (since there isn't a URL Router to load them for you).
 
-The example `EmailHelperTest` provided before would be changed to:
+The example given before would be changed to:
 
 ```php
-class EmailHelperTest extends CITestCase
+require_once('CITestCase.php');
+
+class MyTest extends CITestCase
 {    
 	public function setUp()
 	{
 		$this->CI->load->helper('email');
-        $this->CI->load->model('contactmodel');
 	}
 	
 	public function testEmailValidation()
 	{
 		$this->assertTrue(valid_email('test@test.com'));
 		$this->assertFalse(valid_email('test#testcom'));
+	}
+}
+```
+
+It provides a property `$this->CI` with the default controller loaded. You can use it just as you'd use `$this` inside a controller.
+
+### Using provided CIDatabaseTestCase class ###
+
+The `CIDatabaseTestCase` file extends PHPUnit's `PHPUnit_Extensions_Database_TestCase` and provides database assertions.
+
+The example given before would be changed to:
+
+```php
+require_once('CIDatabaseTestCase.php');
+
+class MyDatabaseTest extends CIDatabaseTestCase
+{    
+	public function setUp()
+	{
+        $this->CI->load->model('contactmodel');
 	}
     
     public function testContactsQty()
@@ -130,11 +151,9 @@ class EmailHelperTest extends CITestCase
         $this->assertEquals($qty, $this->db->getRowCount('contacts'));
     }
 }
-
-?>
 ```
 
-It provides a property `$this->CI` with the default controller loaded, and another `$this->db` as a wrapper to a `PHPUnit_Extensions_Database_DB_IDatabaseConnection`. If your test does not use database connections, it will not be loaded.
+It provides a property `$this->CI` with the default controller loaded, and another `$this->db` as a wrapper to a `PHPUnit_Extensions_Database_DB_IDatabaseConnection`.
 
 **Considerations about this database connection:** it uses your application's database config file to initiate a PDO "fixture" **from your real database**. In other words, it is not a fixture, but a quick way for you to make assertions in your real database. As it is, you must define a `setUp()` call in your methods, or it will use PHPUnit's default database logic to truncate it after every test.
 
@@ -177,9 +196,13 @@ of this manual to teach how to (re)write CI applications with dependency injecti
 have testable controllers, you can load them in tests by changing the `$CI` variable:
 
 ```php
+require_once('CITestCase.php');
+
+class MyTestController extends CITestCase
+{
 public function testHomeController()
 {
-	$CI =& get_instance();
+	$this->requireController('Home'); // assuming you have a applications/controllers/Home.php
 	$CI = new Home();
 	$CI->index();
 }
@@ -187,6 +210,15 @@ public function testHomeController()
 
 Changelog
 ------------
+
+3.0.0 (2015-05-15):
+* CI 3.0.0 is official, so CI3 branch is now master
+* Core folder renamed to mirror vanilla CI
+* Bootstrap tests with fewer hacks
+* Improved utility classes
+* New tests
+* Updated `phpunit.xml`
+* Updated README
 
 3.0 (2015-02-09):
 * Initial support for CI 3.x.

@@ -6,15 +6,13 @@ php:
   - hhvm
 
 env:
-  - CI_VERSION=2.2.2
   - CI_VERSION=3.0.0
 
-# install vanilla CI 2.2 before anything
+# install vanilla CI before anything
 before_install:
   - wget https://github.com/bcit-ci/CodeIgniter/archive/$CI_VERSION.tar.gz -O - | tar xz
   - cp -r application/* CodeIgniter-$CI_VERSION/application/
-  - if [[ "$CI_VERSION" < 3 ]]; then export CORE_DIR=core2; else export CORE_DIR=core3; fi; echo $CORE_DIR;
-  - cp -r system/$CORE_DIR/* CodeIgniter-$CI_VERSION/system/core
+  - cp -r system/* CodeIgniter-$CI_VERSION/system/
 
 # install this project on top of it
 install:
