@@ -5,18 +5,18 @@ php:
   - 5.6
   - hhvm
 
-# install vanilla CI 2.2 before anything
+# install vanilla CI 2.2-stable before anything
 before_install:
-  - wget https://github.com/EllisLab/CodeIgniter/archive/2.2.0.tar.gz -O - | tar xz
-  - cp -r application/* CodeIgniter-2.2.0/application/
-  - cp -r system/* CodeIgniter-2.2.0/system/
+  - wget https://github.com/bcit-ci/CodeIgniter/archive/2.2-stable.tar.gz -O - | tar xz
+  - cp -r application/* CodeIgniter-2.2-stable/application/
+  - cp -r system/* CodeIgniter-2.2-stable/system/
 
 # install this project on top of it
 install:
-  - cp -r CodeIgniter-2.2.0/system/* system/
-  - cp -r CodeIgniter-2.2.0/application/* application/
-  - mv CodeIgniter-2.2.0/index.php index.php
-  - rm -rf CodeIgniter-2.2.0
+  - cp -r CodeIgniter-2.2-stable/system/* system/
+  - cp -r CodeIgniter-2.2-stable/application/* application/
+  - mv CodeIgniter-2.2-stable/index.php index.php
+  - rm -rf CodeIgniter-2.2-stable
 
 # run multiple test commands
 script:
