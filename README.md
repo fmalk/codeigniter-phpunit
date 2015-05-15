@@ -1,11 +1,11 @@
-[![Build Status](https://travis-ci.org/fmalk/codeigniter-phpunit.svg?branch=master)](https://travis-ci.org/fmalk/codeigniter-phpunit)
+[![Build Status](https://travis-ci.org/fmalk/codeigniter-phpunit.svg?branch=2.x)](https://travis-ci.org/fmalk/codeigniter-phpunit)
 
 codeigniter-phpunit
 ===================
 
 This project is a simple hack to make CodeIgniter **2.x** work seamlessly with PHPUnit. It aims to provide a way to use PHPUnit's standard methodologies for automating tests with CodeIgniter framework, which is notoriously test-unfriendly.
 
-If you are looking for CodeIgniter **3.x** support, see branch/tag [3.x](https://github.com/fmalk/codeigniter-phpunit/tree/CI3).
+If you are looking for CodeIgniter **3.x** support, see branch/tag [3.x](https://github.com/fmalk/codeigniter-phpunit/tree/master).
 
 Start Testing
 -------------
