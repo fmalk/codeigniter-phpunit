@@ -107,7 +107,7 @@ class CI_URI {
 			$this->_permitted_uri_chars = $this->config->item('permitted_uri_chars');
 
 			// If it's a PHPUnit test, ignore all command line arguments
-			if (defined('PHPUNIT_TEST') {
+			if (defined('PHPUNIT_TEST')) {
 				$uri = '';
 			}
 			// If it's a CLI request, ignore the configuration
