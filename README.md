@@ -10,9 +10,9 @@ If you are looking for CodeIgniter **2.x** support, see branch/tag [2.x](https:/
 Start Testing
 -------------
 
-The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and hacked *system/core/CodeIgniter.php* file should overwrite the vanilla CI one.
+The files provided here can just be overwritten on top of an existing, vanilla CI application. PHPUnit's `phpunit.xml` will sit besides your application's `index.php`, and hacked CI's *system/core* files should overwrite the vanilla CI ones.
 
-After that, just put your own tests in *application/tests* folder. A `CITestCase.php` file is provided as an util class, to be used instead of `PHPUnit_Framework_TestCase`, but you can use PHPUnit's standard classes as well.
+After that, just put your own tests in *application/tests* folder. Utility classes `CITestCase.php` and `CIDatabaseTestCase.php` are provided to be used instead of `PHPUnit_Framework_TestCase`, but you can use PHPUnit's standard classes as well.
 
 As an example, a unit test for CI's Email helper would be as follows:
 
@@ -79,9 +79,9 @@ What this config file is doing:
 
 ### Hacking CI system files ###
 
-CodeIgniter 3.x needs fewer hacks than its predecessor. In fact, if you use Hook: Display Override (`$hook['display_override']` in *application/config/config.php*), there's no need to hack core files *at all*.
+CodeIgniter 3.x needs fewer hacks than its predecessor. There's only a few checks to be made, and our `PHPUNIT_TEST` config variable is there to help with that.
 
-There's only one check to be made, and our `PHPUNIT_TEST` is there to help with that. If you do use Hook: Display Override in you application, you can even take that out from `phpunit.xml`.
+In fact, if you use Hook: Display Override (`$hook['display_override']` in `application/config/config.php`), there's no need to hack `system/core/CodeIgniter.php`; and if you don't use PHPUnit's command line arguments, neither `system/core/URI.php`.
 
 CI will start by autoloading our custom bootstrap file, reading config files, and most importantly, **load your default Controller**, since it has no routing information (no URI or CLI parameters). This is actually useful, since this is what makes `$CI =& get_instance()` possible in our tests.
 
@@ -98,6 +98,20 @@ CI will start by autoloading our custom bootstrap file, reading config files, an
 >>```
 >>
 >> Prevent CI from outputting things before our tests.
+
+> `URI.php`
+>> *Lines 109 to 114 changed to:*
+>>
+>>```php
+>> // If it's a PHPUnit test, ignore all command line arguments
+>> if (defined('PHPUNIT_TEST') {
+>>     $uri = '';
+>> }
+>> // If it's a CLI request, ignore the configuration
+>> else if (is_cli())
+>>```
+>>
+>> This extra check for PHPUnit CLI environment makes sure CI ignores `phpunit` command line arguments not intended to be parsed by CI.
 
 
 Tips for Testing
