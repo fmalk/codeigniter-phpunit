@@ -104,7 +104,7 @@ CI will start by autoloading our custom bootstrap file, reading config files, an
 >>
 >>```php
 >> // If it's a PHPUnit test, ignore all command line arguments
->> if (defined('PHPUNIT_TEST') {
+>> if (defined('PHPUNIT_TEST')) {
 >>     $uri = '';
 >> }
 >> // If it's a CLI request, ignore the configuration
