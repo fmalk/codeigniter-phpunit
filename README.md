@@ -113,6 +113,59 @@ CI will start by autoloading our custom bootstrap file, reading config files, an
 >>
 >> This extra check for PHPUnit CLI environment makes sure CI ignores `phpunit` command line arguments not intended to be parsed by CI.
 
+Testing your Controllers
+------------
+
+Testing Controllers are not straightfoward as Models, Libraries or Helpers in CodeIgniter, because CI
+has tightly coupled dependencies with classes like Session, Cookies, Caches and Input. It is beyond scope
+of this manual to teach how to (re)write CI applications with dependency injection in mind, but if you
+have testable controllers, you can load them in tests by changing the `$CI` variable:
+
+```php
+require_once('CITestCase.php');
+
+class MyTestController extends CITestCase
+{
+public function testHome()
+{
+	$this->requireController('Home'); // assuming you have a applications/controllers/Home.php
+	$CI = new Home();
+	$CI->index();
+}
+```
+
+### About Redirects and URL Parameters ###
+
+When run from the CLI with PHPUnit, your CI application won't have any information about URL parameters.
+This is means your controller's methods won't have their arguments filled magically by parsing your URL, so
+you have to pass them as if they're a common method:
+
+```php
+require_once('CITestCase.php');
+
+class MyTestController extends CITestCase
+{
+public function testHomeShowUser()
+{
+	$this->requireController('Home'); // assuming you have a applications/controllers/Home.php
+	$CI = new Home();
+	$CI->showUser(2);
+}
+```
+
+That also implies you shouldn't rely on any URL-based utility method when testing from PHPUnit: `base_url()`,
+`redirect()`, `uri_string()`, and other functions from URL Helper, since they could either break your test or
+behave unpredictably.
+If you need to work around that, make use of helpers like `is_cli()`.
+
+### Bootstrap will call your default route once ###
+
+CI needs to bootstrap itself to be able to run, and since PHP is usually run from a HTTP request, this means
+CI loads itself up and expects a route to follow, dictated by whatever URL was requested. PHPUnit won't supply
+that information, **so CI will call your default route once**, before any test is run.
+You should take special care of your default route then, because if it isn't testable (doing a redirect,
+making difficult database queries, etc), it could mean your tests will break before starting.
+Ideally, your default route should be light and fast.
 
 Tips for Testing
 ================
@@ -202,28 +255,11 @@ public function testCreateNullName()
 }
 ```
 
-### Testing your Controllers ###
-
-Testing Controllers are not straightfoward as Models, Libraries or Helpers in CodeIgniter, because CI
-has tightly coupled dependencies with classes like Session, Cookies, Caches or Input. It is beyond scope
-of this manual to teach how to (re)write CI applications with dependency injection in mind, but if you
-have testable controllers, you can load them in tests by changing the `$CI` variable:
-
-```php
-require_once('CITestCase.php');
-
-class MyTestController extends CITestCase
-{
-public function testHomeController()
-{
-	$this->requireController('Home'); // assuming you have a applications/controllers/Home.php
-	$CI = new Home();
-	$CI->index();
-}
-```
-
 Changelog
 ------------
+
+3.0.1 (2015-06-23):
+* Improved README about Controllers (see #32)
 
 3.0.0 (2015-05-15):
 * CI 3.0.0 is official, so CI3 branch is now master
