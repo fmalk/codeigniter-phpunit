@@ -6,7 +6,7 @@
  *---------------------------------------------------------------
  *
  * This will "override" later functions meant to be defined
- * in core\Common.php, so they throw erros instead of output strings
+ * in core\Common.php, so they throw errors instead of output strings
  */
 
 function show_error($message, $status_code = 500, $heading = 'An Error Was Encountered')
