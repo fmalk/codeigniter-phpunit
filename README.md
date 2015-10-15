@@ -258,6 +258,9 @@ public function testCreateNullName()
 Changelog
 ------------
 
+3.0.2 (2015-10-15):
+* Support for DSN-based database hosts
+
 3.0.1 (2015-06-23):
 * Improved README about Controllers (see #32)
 
