@@ -94,7 +94,7 @@ CI will start by autoloading our custom bootstrap file, reading config files, an
 >> *Line 531 changed to:*
 >>
 >>```php
->> if ($EXT->_call_hook('display_override') === FALSE && !defined('PHPUNIT_TEST'))
+>> if ($EXT->call_hook('display_override') === FALSE && !defined('PHPUNIT_TEST'))
 >>```
 >>
 >> Prevent CI from outputting things before our tests.
