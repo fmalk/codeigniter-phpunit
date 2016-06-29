@@ -58,22 +58,22 @@ class ControllersTest extends CITestCase
 			$this->markTestSkipped('Cannot write in subfolder');
 		
 		// create a test controller
-		if (!is_writable($folder.'/Stub.php')) {
+		if (!is_writable($folder.'/SubStub.php')) {
 			// create stub file
-			$success = file_put_contents($folder.'/Stub.php',
-									'<?php class Stub extends CI_Controller { public function index(){} } ?>');
+			$success = file_put_contents($folder.'/SubStub.php',
+									'<?php class SubStub extends CI_Controller { public function index(){} } ?>');
 			if (!$success)
-				$this->markTestSkipped('Cannot create test controller file');
+				$this->markTestSkipped('Cannot create test sub controller file');
 		}
 		
-		$this->requireController('Stub');
-		$this->assertTrue(class_exists('Stub'), 'Class is loadable');
-		$this->CI = new Stub();
-		$this->assertInstanceOf('CI_Controller', $this->CI, 'Controller was called correctly');
+		$this->requireController('SubStub', 'testsubfolder');
+		$this->assertTrue(class_exists('SubStub'), 'Sub Class is loadable');
+		$this->CI = new SubStub();
+		$this->assertInstanceOf('CI_Controller', $this->CI, 'Sub Controller was called correctly');
 		$this->CI->index();
 		
 		// remove stub
-		unlink($folder.'/Stub.php');
+		unlink($folder.'/SubStub.php');
 		rmdir($folder);
 	}
 	
